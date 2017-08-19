@@ -18,4 +18,8 @@ $rewrite = [
             'class' => 'ModelTenfCatalogProduct',
         ]
     ],
+    'view' => [
+        // file path => file path
+        'catalog/product_form' => 'catalog/product_form'
+    ]
 ];

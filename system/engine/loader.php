@@ -126,13 +126,14 @@ final class Loader {
 		if ($result && !$result instanceof Exception) {
 			$output = $result;
 		} else {
-			$template = new Template($this->registry->get('config')->get('template_engine'));
-				
+//			$template = new Template($this->registry->get('config')->get('template_engine'));
+            $template = new Template('cTwig');
+
 			foreach ($data as $key => $value) {
 				$template->set($key, $value);
 			}
 
-			$output = $template->render($this->registry->get('config')->get('template_directory') . $route, $this->registry->get('config')->get('template_cache'));		
+			$output = $template->render($this->registry->get('config')->get('template_directory') . $route, $this->registry->get('config')->get('template_cache'));
 		}
 		
 		// Trigger the post events
