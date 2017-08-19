@@ -87,7 +87,9 @@ spl_autoload_register('library');
 spl_autoload_extensions('.php');
 
 // Engine
-require_once(modification(DIR_SYSTEM . 'engine/action.php'));
+// require_once(modification(DIR_SYSTEM . 'engine/action.php'));
+// use rewrite router
+require_once(modification(dirname(DIR_REWRITE) . DIRECTORY_SEPARATOR . 'system/engine/action.php'));
 require_once(modification(DIR_SYSTEM . 'engine/controller.php'));
 require_once(modification(DIR_SYSTEM . 'engine/event.php'));
 require_once(modification(DIR_SYSTEM . 'engine/router.php'));
