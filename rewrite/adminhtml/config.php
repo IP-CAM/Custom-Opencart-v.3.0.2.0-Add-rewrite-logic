@@ -6,8 +6,16 @@
  * Time: 下午3:23
  */
 $rewrite = [
-    'catalog/product' => [
-        'rewrite' => true,
-        'class' => 'catalog/model/product.php'
-    ]
+    'controller' => [
+        'catalog/product' => [
+            'rewrite' => true,
+            'class' => 'ControllerTenfCatalogProduct'
+        ]
+    ],
+    'model' => [
+        'catalog/product' => [
+            'rewrite' => true,
+            'class' => 'ModelTenfCatalogProduct',
+        ]
+    ],
 ];

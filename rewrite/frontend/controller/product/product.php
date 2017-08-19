@@ -275,10 +275,17 @@ class ControllerTenfProductProduct extends ControllerProductProduct
             $results = $this->model_catalog_product->getProductImages($this->request->get['product_id']);
 
             foreach ($results as $result) {
-                $data['images'][] = array(
-                    'popup' => $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_popup_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_popup_height')),
-                    'thumb' => $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_height'))
-                );
+                if ($result['cdn']) {
+                    $data['images'][] = array(
+                        'thumb' => str_replace('{{size}}', sprintf('size=c%d_u%d', $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_width')), $result['image']),
+                        'popup' => str_replace('{{size}}', sprintf('size=c%d_u%d', $this->config->get('theme_' . $this->config->get('config_theme') . '_image_popup_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_popup_height')), $result['image']),
+                    );
+                } else {
+                    $data['images'][] = array(
+                        'popup' => $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_popup_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_popup_height')),
+                        'thumb' => $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_height'))
+                    );
+                }
             }
 
             if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
