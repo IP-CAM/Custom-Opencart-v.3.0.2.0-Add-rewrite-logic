@@ -226,47 +226,18 @@ class ControllerTenfProductProduct extends ControllerProductProduct
             $this->document->addLink($this->url->link('product/product', 'product_id=' . $this->request->get['product_id']), 'canonical');
             $this->document->addScript('catalog/view/javascript/jquery/magnific/jquery.magnific-popup.min.js');
             $this->document->addStyle('catalog/view/javascript/jquery/magnific/magnific-popup.css');
-            $this->document->addScript('catalog/view/javascript/jquery/datetimepicker/moment.js');
+            $this->document->addScript('catalog/view/javascript/jquery/datetimepicker/moment/moment.min.js');
+            $this->document->addScript('catalog/view/javascript/jquery/datetimepicker/moment/moment-with-locales.min.js');
             $this->document->addScript('catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.js');
             $this->document->addStyle('catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.css');
 
             $data['heading_title'] = $product_info['name'];
 
-            $data['text_select'] = $this->language->get('text_select');
-            $data['text_manufacturer'] = $this->language->get('text_manufacturer');
-            $data['text_model'] = $this->language->get('text_model');
-            $data['text_reward'] = $this->language->get('text_reward');
-            $data['text_points'] = $this->language->get('text_points');
-            $data['text_stock'] = $this->language->get('text_stock');
-            $data['text_discount'] = $this->language->get('text_discount');
-            $data['text_tax'] = $this->language->get('text_tax');
-            $data['text_option'] = $this->language->get('text_option');
             $data['text_minimum'] = sprintf($this->language->get('text_minimum'), $product_info['minimum']);
-            $data['text_write'] = $this->language->get('text_write');
             $data['text_login'] = sprintf($this->language->get('text_login'), $this->url->link('account/login', '', true), $this->url->link('account/register', '', true));
-            $data['text_note'] = $this->language->get('text_note');
-            $data['text_tags'] = $this->language->get('text_tags');
-            $data['text_related'] = $this->language->get('text_related');
-            $data['text_payment_recurring'] = $this->language->get('text_payment_recurring');
-            $data['text_loading'] = $this->language->get('text_loading');
-
-            $data['entry_qty'] = $this->language->get('entry_qty');
-            $data['entry_name'] = $this->language->get('entry_name');
-            $data['entry_review'] = $this->language->get('entry_review');
-            $data['entry_rating'] = $this->language->get('entry_rating');
-            $data['entry_good'] = $this->language->get('entry_good');
-            $data['entry_bad'] = $this->language->get('entry_bad');
-
-            $data['button_cart'] = $this->language->get('button_cart');
-            $data['button_wishlist'] = $this->language->get('button_wishlist');
-            $data['button_compare'] = $this->language->get('button_compare');
-            $data['button_upload'] = $this->language->get('button_upload');
-            $data['button_continue'] = $this->language->get('button_continue');
 
             $this->load->model('catalog/review');
 
-            $data['tab_description'] = $this->language->get('tab_description');
-            $data['tab_attribute'] = $this->language->get('tab_attribute');
             $data['tab_review'] = sprintf($this->language->get('tab_review'), $product_info['reviews']);
 
             $data['product_id'] = (int)$this->request->get['product_id'];
@@ -288,13 +259,13 @@ class ControllerTenfProductProduct extends ControllerProductProduct
             $this->load->model('tool/image');
 
             if ($product_info['image']) {
-                $data['popup'] = $this->model_tool_image->resize($product_info['image'], $this->config->get($this->config->get('config_theme') . '_image_popup_width'), $this->config->get($this->config->get('config_theme') . '_image_popup_height'));
+                $data['popup'] = $this->model_tool_image->resize($product_info['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_popup_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_popup_height'));
             } else {
                 $data['popup'] = '';
             }
 
             if ($product_info['image']) {
-                $data['thumb'] = $this->model_tool_image->resize($product_info['image'], $this->config->get($this->config->get('config_theme') . '_image_thumb_width'), $this->config->get($this->config->get('config_theme') . '_image_thumb_height'));
+                $data['thumb'] = $this->model_tool_image->resize($product_info['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_height'));
             } else {
                 $data['thumb'] = '';
             }
@@ -304,10 +275,10 @@ class ControllerTenfProductProduct extends ControllerProductProduct
             $results = $this->model_catalog_product->getProductImages($this->request->get['product_id']);
 
             foreach ($results as $result) {
-				$data['images'][] = array(
-					'popup' => $this->model_tool_image->resize($result['image'], $this->config->get($this->config->get('config_theme') . '_image_popup_width'), $this->config->get($this->config->get('config_theme') . '_image_popup_height')),
-					'thumb' => $this->model_tool_image->resize($result['image'], $this->config->get($this->config->get('config_theme') . '_image_additional_width'), $this->config->get($this->config->get('config_theme') . '_image_additional_height'))
-				);
+                $data['images'][] = array(
+                    'popup' => $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_popup_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_popup_height')),
+                    'thumb' => $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_height'))
+                );
             }
 
             if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
@@ -389,7 +360,7 @@ class ControllerTenfProductProduct extends ControllerProductProduct
             }
 
             if ($this->customer->isLogged()) {
-                $data['customer_name'] = $this->customer->getFullName();
+                $data['customer_name'] = $this->customer->getFirstName() . '&nbsp;' . $this->customer->getLastName();
             } else {
                 $data['customer_name'] = '';
             }
@@ -398,7 +369,7 @@ class ControllerTenfProductProduct extends ControllerProductProduct
             $data['rating'] = (int)$product_info['rating'];
 
             // Captcha
-            if ($this->config->get($this->config->get('config_captcha') . '_status') && in_array('review', (array)$this->config->get('config_captcha_page'))) {
+            if ($this->config->get('captcha_' . $this->config->get('config_captcha') . '_status') && in_array('review', (array)$this->config->get('config_captcha_page'))) {
                 $data['captcha'] = $this->load->controller('extension/captcha/' . $this->config->get('config_captcha'));
             } else {
                 $data['captcha'] = '';
@@ -414,9 +385,9 @@ class ControllerTenfProductProduct extends ControllerProductProduct
 
             foreach ($results as $result) {
                 if ($result['image']) {
-                    $image = $this->model_tool_image->resize($result['image'], $this->config->get($this->config->get('config_theme') . '_image_related_width'), $this->config->get($this->config->get('config_theme') . '_image_related_height'));
+                    $image = $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_height'));
                 } else {
-                    $image = $this->model_tool_image->resize('placeholder.png', $this->config->get($this->config->get('config_theme') . '_image_related_width'), $this->config->get($this->config->get('config_theme') . '_image_related_height'));
+                    $image = $this->model_tool_image->resize('placeholder.png', $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_height'));
                 }
 
                 if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
@@ -447,7 +418,7 @@ class ControllerTenfProductProduct extends ControllerProductProduct
                     'product_id'  => $result['product_id'],
                     'thumb'       => $image,
                     'name'        => $result['name'],
-                    'description' => utf8_substr(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8')), 0, $this->config->get($this->config->get('config_theme') . '_product_description_length')) . '..',
+                    'description' => utf8_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
                     'price'       => $price,
                     'special'     => $special,
                     'tax'         => $tax,
@@ -539,12 +510,6 @@ class ControllerTenfProductProduct extends ControllerProductProduct
             );
 
             $this->document->setTitle($this->language->get('text_error'));
-
-            $data['heading_title'] = $this->language->get('text_error');
-
-            $data['text_error'] = $this->language->get('text_error');
-
-            $data['button_continue'] = $this->language->get('button_continue');
 
             $data['continue'] = $this->url->link('common/home');
 
