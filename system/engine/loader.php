@@ -72,7 +72,6 @@ final class Loader {
 		if (!$this->registry->has('model_' . str_replace('/', '_', $route))) {
 			$file  = DIR_APPLICATION . 'model/' . $route . '.php';
 			$class = 'Model' . preg_replace('/[^a-zA-Z0-9]/', '', $route);
-
             // if is rewrite, load $rewrite
             $rewrite = [];
             require(DIR_REWRITE . 'config.php');
@@ -243,10 +242,20 @@ final class Loader {
 				$output = $result;
 			} else {
 				$class = 'Model' . preg_replace('/[^a-zA-Z0-9]/', '', substr($route, 0, strrpos($route, '/')));
-				
+
 				// Store the model object
 				$key = substr($route, 0, strrpos($route, '/'));
-				
+
+                // if is rewrite, load $rewrite
+                $rewrite = [];
+                require(DIR_REWRITE . 'config.php');
+                if (isset($rewrite['model'][$key])) {
+                    if($rewrite['model'][$key]['rewrite']) {
+                        $file  = DIR_REWRITE . 'model/' . $key . '.php';
+                        $class = $rewrite['model'][$key]['class'];
+                    }
+                }
+
 				if (!isset($model[$key])) {
 					$model[$key] = new $class($registry);
 				}
