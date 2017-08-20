@@ -30,6 +30,8 @@ define('DIR_MODIFICATION', DIR_SYSTEM . 'storage/modification/');
 define('DIR_DOWNLOAD', DIR_SYSTEM . 'storage/download/');
 define('DIR_SESSION', DIR_SYSTEM . 'storage/session/');
 define('DIR_UPLOAD', DIR_SYSTEM . 'storage/upload/');
+define('DIR_REWRITE', '/var/www/html/5.6/local.opencart.com/public_html/rewrite/frontend/');
+
 
 // Startup
 require_once(DIR_SYSTEM . 'startup.php');
