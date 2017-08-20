@@ -1,5 +1,5 @@
-##Custome OpenCart##
-####Importent####
+##Custome OpenCart
+####Importent
 The follwoing cron file have been rewrite.
 1. `/system/engine/loader.php` for rewrite mode Add custome rewrite logic.
 2. `/system/library/template/cTwig.php` clone `/system/library/template/Twig.php` for rewrite template file.
@@ -12,7 +12,7 @@ The following params need add
 
 - - -
 
-####Rewrite dir struct####
+####Rewrite dir struct
 
 ```text
 root_dir
@@ -75,7 +75,12 @@ $rewrite = [
 ];
 ```
 
+##Modify SQL
 
+```sql
+- modify product image tabble
+ALTER TABLE oc_product_image` CHANGE COLUMN `image` `image` longtext DEFAULT NULL, ADD COLUMN `cdn` tinyint UNSIGNED DEFAULT 0 AFTER `sort_order`, ADD COLUMN `fs_id` varchar(50) DEFAULT 0 AFTER `cdn`;
+```
 
 
 
