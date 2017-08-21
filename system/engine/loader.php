@@ -6,13 +6,11 @@
  * @license		https://opensource.org/licenses/GPL-3.0
  * @link		https://www.opencart.com
 */
-
 /**
 * Loader class
 */
 final class Loader {
 	protected $registry;
-
 	/**
 	 * Constructor
 	 *
@@ -21,7 +19,6 @@ final class Loader {
 	public function __construct($registry) {
 		$this->registry = $registry;
 	}
-
 	/**
 	 * 
 	 *
@@ -54,12 +51,10 @@ final class Loader {
 		if ($result && !$result instanceof Exception) {
 			$output = $result;
 		}
-
 		if (!$output instanceof Exception) {
 			return $output;
 		}
 	}
-
 	/**
 	 * 
 	 *
@@ -72,17 +67,7 @@ final class Loader {
 		if (!$this->registry->has('model_' . str_replace('/', '_', $route))) {
 			$file  = DIR_APPLICATION . 'model/' . $route . '.php';
 			$class = 'Model' . preg_replace('/[^a-zA-Z0-9]/', '', $route);
-            // if is rewrite, load $rewrite
-            $rewrite = [];
-            require(DIR_REWRITE . 'config.php');
-            if (isset($rewrite['model'][$route])) {
-                if($rewrite['model'][$route]['rewrite']) {
-                    require_once $file;
-                    $file  = DIR_REWRITE . 'model/' . $route . '.php';
-                    $class = $rewrite['model'][$route]['class'];
-                }
-            }
-
+			
 			if (is_file($file)) {
 				include_once($file);
 	
@@ -100,7 +85,6 @@ final class Loader {
 			}
 		}
 	}
-
 	/**
 	 * 
 	 *
@@ -126,14 +110,12 @@ final class Loader {
 		if ($result && !$result instanceof Exception) {
 			$output = $result;
 		} else {
-//			$template = new Template($this->registry->get('config')->get('template_engine'));
-            $template = new Template('cTwig');
-
+			$template = new Template($this->registry->get('config')->get('template_engine'));
+				
 			foreach ($data as $key => $value) {
 				$template->set($key, $value);
 			}
-
-			$output = $template->render($this->registry->get('config')->get('template_directory') . $route, $this->registry->get('config')->get('template_cache'));
+			$output = $template->render($this->registry->get('config')->get('template_directory') . $route, $this->registry->get('config')->get('template_cache'));		
 		}
 		
 		// Trigger the post events
@@ -145,7 +127,6 @@ final class Loader {
 		
 		return $output;
 	}
-
 	/**
 	 * 
 	 *
@@ -157,16 +138,13 @@ final class Loader {
 			
 		$file = DIR_SYSTEM . 'library/' . $route . '.php';
 		$class = str_replace('/', '\\', $route);
-
 		if (is_file($file)) {
 			include_once($file);
-
 			$this->registry->set(basename($route), new $class($this->registry));
 		} else {
 			throw new \Exception('Error: Could not load library ' . $route . '!');
 		}
 	}
-
 	/**
 	 * 
 	 *
@@ -174,14 +152,12 @@ final class Loader {
  	*/	
 	public function helper($route) {
 		$file = DIR_SYSTEM . 'helper/' . preg_replace('/[^a-zA-Z0-9_\/]/', '', (string)$route) . '.php';
-
 		if (is_file($file)) {
 			include_once($file);
 		} else {
 			throw new \Exception('Error: Could not load helper ' . $route . '!');
 		}
 	}
-
 	/**
 	 * 
 	 *
@@ -194,7 +170,6 @@ final class Loader {
 		
 		$this->registry->get('event')->trigger('config/' . $route . '/after', array(&$route));
 	}
-
 	/**
 	 * 
 	 *
@@ -232,7 +207,6 @@ final class Loader {
 			static $model;
 			
 			$route = preg_replace('/[^a-zA-Z0-9_\/]/', '', (string)$route);
-
 			// Keep the original trigger
 			$trigger = $route;
 					
@@ -243,20 +217,10 @@ final class Loader {
 				$output = $result;
 			} else {
 				$class = 'Model' . preg_replace('/[^a-zA-Z0-9]/', '', substr($route, 0, strrpos($route, '/')));
-
+				
 				// Store the model object
 				$key = substr($route, 0, strrpos($route, '/'));
-
-                // if is rewrite, load $rewrite
-                $rewrite = [];
-                require(DIR_REWRITE . 'config.php');
-                if (isset($rewrite['model'][$key])) {
-                    if($rewrite['model'][$key]['rewrite']) {
-                        $file  = DIR_REWRITE . 'model/' . $key . '.php';
-                        $class = $rewrite['model'][$key]['class'];
-                    }
-                }
-
+				
 				if (!isset($model[$key])) {
 					$model[$key] = new $class($registry);
 				}

@@ -9,7 +9,7 @@
 namespace Template;
 
 
-final class cTwig {
+final class Ctwig {
     private $twig;
     private $data = array();
 
@@ -50,9 +50,6 @@ final class cTwig {
         try {
             // load template
             $template = $this->twig->loadTemplate($template . '.twig');
-//            echo '<pre>';
-//            print_r($template);
-//            echo '</pre>';
             return $template->render($this->data);
         } catch (Exception $e) {
             trigger_error('Error: Could not load template ' . $template . '!');
