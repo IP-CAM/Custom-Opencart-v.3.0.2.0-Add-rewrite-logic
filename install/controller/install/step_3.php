@@ -30,7 +30,8 @@ class ControllerInstallStep3 extends Controller {
 			$output .= 'define(\'DIR_LOGS\', DIR_STORAGE . \'logs/\');' . "\n";
 			$output .= 'define(\'DIR_MODIFICATION\', DIR_STORAGE . \'modification/\');' . "\n";
 			$output .= 'define(\'DIR_SESSION\', DIR_STORAGE . \'session/\');' . "\n";
-			$output .= 'define(\'DIR_UPLOAD\', DIR_STORAGE . \'upload/\');' . "\n\n";
+			$output .= 'define(\'DIR_UPLOAD\', DIR_STORAGE . \'upload/\');' . "\n";
+			$output .= 'define(\'DIR_REWRITE\', \'' . addslashes(DIR_OPENCART) . 'rewrite/frontend/\');' . "\n\n";
 			
 			$output .= '// DB' . "\n";
 			$output .= 'define(\'DB_DRIVER\', \'' . addslashes($this->request->post['db_driver']) . '\');' . "\n";
@@ -83,6 +84,7 @@ class ControllerInstallStep3 extends Controller {
 			
 			$output .= '// OpenCart API' . "\n";
 			$output .= 'define(\'OPENCART_SERVER\', \'https://www.opencart.com/\');' . "\n";
+			$output .= 'define(\'DIR_REWRITE\', \'' . addslashes(DIR_OPENCART) . 'rewrite/adminhtml/\');' . "\n";
 
 			$file = fopen(DIR_OPENCART . 'admin/config.php', 'w');
 
