@@ -20,69 +20,130 @@
     {% endif %}
     <div id="content" class="{{ class }}">{{ content_top }}
       <h1>{{ heading_title }}</h1>
-      <div class="panel-group" id="accordion">
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h4 class="panel-title">{{ text_checkout_option }}</h4>
-          </div>
-          <div class="panel-collapse collapse" id="collapse-checkout-option">
-            <div class="panel-body"></div>
-          </div>
+<!-- =============================================================== -->
+
+
+
+
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span12">
+                    <address> <strong>Twitter, Inc.</strong><br /> 795 Folsom Ave, Suite 600<br /> San Francisco, CA 94107<br /> <abbr title="Phone">P:</abbr> (123) 456-7890</address>
+                </div>
+            </div>
+            <div class="row-fluid">
+                <div class="span6">
+                    <ul class="unstyled">
+                        <li>
+                            新闻资讯
+                        </li>
+                        <li>
+                            体育竞技
+                        </li>
+                        <li>
+                            娱乐八卦
+                        </li>
+                        <li>
+                            前沿科技
+                        </li>
+                        <li>
+                            环球财经
+                        </li>
+                        <li>
+                            天气预报
+                        </li>
+                        <li>
+                            房产家居
+                        </li>
+                        <li>
+                            网络游戏
+                        </li>
+                    </ul>
+                </div>
+                <div class="span6">
+                    <ul class="unstyled">
+                        <li>
+                            新闻资讯
+                        </li>
+                        <li>
+                            体育竞技
+                        </li>
+                        <li>
+                            娱乐八卦
+                        </li>
+                        <li>
+                            前沿科技
+                        </li>
+                        <li>
+                            环球财经
+                        </li>
+                        <li>
+                            天气预报
+                        </li>
+                        <li>
+                            房产家居
+                        </li>
+                        <li>
+                            网络游戏
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="panel-body"><div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                        <tr>
+                            <td class="text-left">商品名称</td>
+                            <td class="text-left">型号</td>
+                            <td class="text-right">数量</td>
+                            <td class="text-right">单价</td>
+                            <td class="text-right">小计</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        <tr>
+                            <td class="text-left"><a href="http://local.opencart.com/index.php?route=product/product&amp;product_id=41">iMac</a>         </td>
+                            <td class="text-left">Product 14</td>
+                            <td class="text-right">1</td>
+                            <td class="text-right">100.00</td>
+                            <td class="text-right">100.00</td>
+                        </tr>
+                        </tbody>
+
+                        <tfoot>
+
+                        <tr>
+                            <td colspan="4" class="text-right"><strong>小计:</strong></td>
+                            <td class="text-right">100.00</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="text-right"><strong>固定运费率:</strong></td>
+                            <td class="text-right">5.00</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="text-right"><strong>总计:</strong></td>
+                            <td class="text-right">105.00</td>
+                        </tr>
+                        </tfoot>
+
+                    </table>
+                </div>
+                <div class="buttons">
+                    <div class="pull-right">
+                        <input value="确认订单" id="button-confirm" data-loading-text="加载中......" class="btn btn-primary" type="button">
+                    </div>
+                </div>
+
+            </div>
         </div>
-        {% if not logged and account != 'guest' %}
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h4 class="panel-title">{{ text_checkout_account }}</h4>
-          </div>
-          <div class="panel-collapse collapse" id="collapse-payment-address">
-            <div class="panel-body"></div>
-          </div>
-        </div>
-        {% else %}
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h4 class="panel-title">{{ text_checkout_payment_address }}</h4>
-          </div>
-          <div class="panel-collapse collapse" id="collapse-payment-address">
-            <div class="panel-body"></div>
-          </div>
-        </div>
-        {% endif %}
-        {% if shipping_required %}
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h4 class="panel-title">{{ text_checkout_shipping_address }}</h4>
-          </div>
-          <div class="panel-collapse collapse" id="collapse-shipping-address">
-            <div class="panel-body"></div>
-          </div>
-        </div>
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h4 class="panel-title">{{ text_checkout_shipping_method }}</h4>
-          </div>
-          <div class="panel-collapse collapse" id="collapse-shipping-method">
-            <div class="panel-body"></div>
-          </div>
-        </div>
-        {% endif %}
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h4 class="panel-title">{{ text_checkout_payment_method }}</h4>
-          </div>
-          <div class="panel-collapse collapse" id="collapse-payment-method">
-            <div class="panel-body"></div>
-          </div>
-        </div>
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h4 class="panel-title">{{ text_checkout_confirm }}</h4>
-          </div>
-          <div class="panel-collapse collapse" id="collapse-checkout-confirm">
-            <div class="panel-body"></div>
-          </div>
-        </div>
-      </div>
+
+
+
+
+
+<!-- =============================================================== -->
       {{ content_bottom }}</div>
     {{ column_right }}</div>
 </div>

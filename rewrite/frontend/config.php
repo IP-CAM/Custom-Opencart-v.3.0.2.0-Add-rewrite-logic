@@ -5,10 +5,10 @@ $rewrite = [
             'rewrite' => true,
             'class' => 'ControllerTenfProductProduct'
         ],
-        'checkout/checkout' => [
-            'rewrite' => true,
-            'class' => 'ControllerTenfCheckoutCheckout'
-        ]
+//        'checkout/checkout' => [
+//            'rewrite' => true,
+//            'class' => 'ControllerTenfCheckoutCheckout'
+//        ]
     ],
     'model' => [
         'catalog/product' => [
