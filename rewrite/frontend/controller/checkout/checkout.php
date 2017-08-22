@@ -7,7 +7,7 @@ class ControllerTenfCheckoutCheckout extends ControllerCheckoutCheckout
         $this->load->language('checkout/checkout');
         $this->document->addStyle('catalog/view/javascript/vue.js');
 
-
+        var_dump($this->load->model('checkout/order')->getTest());
         $this->document->setTitle($this->language->get('heading_title'));
 
         $data['breadcrumbs'] = array();
@@ -282,5 +282,57 @@ class ControllerTenfCheckoutCheckout extends ControllerCheckoutCheckout
         $data['header'] = $this->load->controller('common/header');
 
         return $data;
+    }
+
+    public function save()
+    {
+        $this->load->language('checkout/checkout');
+        $json = array();
+
+
+        /**************************************************
+         * validate start
+         **************************************************/
+        // Validate if customer is logged in.
+        if (!$this->customer->isLogged()) {
+            $json['redirect'] = $this->url->link('checkout/checkout', '', true);
+        }
+
+        // Validate cart has products and has stock.
+        if ((!$this->cart->hasProducts() && empty($this->session->data['vouchers'])) || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout'))) {
+            $json['redirect'] = $this->url->link('checkout/cart');
+        }
+
+        // Validate minimum quantity requirements.
+        $products = $this->cart->getProducts();
+
+        foreach ($products as $product) {
+            $product_total = 0;
+
+            foreach ($products as $product_2) {
+                if ($product_2['product_id'] == $product['product_id']) {
+                    $product_total += $product_2['quantity'];
+                }
+            }
+
+            if ($product['minimum'] > $product_total) {
+                $json['redirect'] = $this->url->link('checkout/cart');
+
+                break;
+            }
+        }
+        /**************************************************
+         * validate end
+         **************************************************/
+
+        $this->hasShipping();
+
+        $this->renderJson($json);
+    }
+
+    protected function renderJson($data)
+    {
+        $this->response->addHeader('Content-Type: application/json');
+        $this->response->setOutput(json_encode($data));
     }
 }
