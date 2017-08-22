@@ -31,6 +31,7 @@
                     <address> <strong>Twitter, Inc.</strong><br /> 795 Folsom Ave, Suite 600<br /> San Francisco, CA 94107<br /> <abbr title="Phone">P:</abbr> (123) 456-7890</address>
                 </div>
             </div>
+            {% if shipping_required %}
             <div class="row-fluid">
                 <div class="span6">
                     <ul class="unstyled">
@@ -60,35 +61,31 @@
                         </li>
                     </ul>
                 </div>
+                {% endif %}
                 <div class="span6">
+                    <h3>支付方式</h3>
+                    <p>{{ text_payment_method }}</p>
                     <ul class="unstyled">
+                        {% if payment_methods %}
+                        {% for payment_method in payment_methods %}
                         <li>
-                            新闻资讯
+                            <label>{% if payment_method.code == code or not code %}
+                                    {% set code = payment_method.code %}
+                                    <input type="radio" name="payment_method" value="{{ payment_method.code }}" checked="checked" />
+                                {% else %}
+                                    <input type="radio" name="payment_method" value="{{ payment_method.code }}" />
+                                {% endif %}
+                                {{ payment_method.title }}
+                                {% if payment_method.terms %}
+                                    ({{ payment_method.terms }})
+                                {% endif %} </label>
                         </li>
-                        <li>
-                            体育竞技
-                        </li>
-                        <li>
-                            娱乐八卦
-                        </li>
-                        <li>
-                            前沿科技
-                        </li>
-                        <li>
-                            环球财经
-                        </li>
-                        <li>
-                            天气预报
-                        </li>
-                        <li>
-                            房产家居
-                        </li>
-                        <li>
-                            网络游戏
-                        </li>
+                        {% endfor %}
+                        {% endif %}
                     </ul>
                 </div>
             </div>
+
 
             <div class="panel-body"><div class="table-responsive">
                     <table class="table table-bordered table-hover">
@@ -102,41 +99,61 @@
                         </tr>
                         </thead>
                         <tbody>
-
+                        {% for product in products %}
                         <tr>
-                            <td class="text-left"><a href="http://local.opencart.com/index.php?route=product/product&amp;product_id=41">iMac</a>         </td>
-                            <td class="text-left">Product 14</td>
-                            <td class="text-right">1</td>
-                            <td class="text-right">100.00</td>
-                            <td class="text-right">100.00</td>
+                            <td class="text-left">
+                                <a href="{{ product.href }}">{{ product.name }}</a>
+                                {% for option in product.option %} <br />
+                                    &nbsp;<small> - {{ option.name }}: {{ option.value }}</small>
+                                {% endfor %}
+                                {% if product.recurring %} <br />
+                                    <span class="label label-info">{{ text_recurring_item }}</span> <small>{{ product.recurring }}</small>
+                                {% endif %}
+                            </td>
+                            <td class="text-left">{{ product.model }}</td>
+                            <td class="text-right">{{ product.quantity }}</td>
+                            <td class="text-right">{{ product.price }}</td>
+                            <td class="text-right">{{ product.total }}</td>
                         </tr>
+                        {% endfor %}
                         </tbody>
 
                         <tfoot>
-
-                        <tr>
-                            <td colspan="4" class="text-right"><strong>小计:</strong></td>
-                            <td class="text-right">100.00</td>
-                        </tr>
-                        <tr>
-                            <td colspan="4" class="text-right"><strong>固定运费率:</strong></td>
-                            <td class="text-right">5.00</td>
-                        </tr>
-                        <tr>
-                            <td colspan="4" class="text-right"><strong>总计:</strong></td>
-                            <td class="text-right">105.00</td>
-                        </tr>
+                        {% for total in totals %}
+                            <tr>
+                                <td colspan="4" class="text-right"><strong>{{ total.title }}:</strong></td>
+                                <td class="text-right">{{ total.text }}</td>
+                            </tr>
+                        {% endfor %}
                         </tfoot>
 
                     </table>
                 </div>
+
+            </div>
+
+            <div class="panel-body"><div class="table-responsive">
+                <p><strong>{{ text_comments }}</strong></p>
+                <p>
+                    <textarea name="comment" rows="8" class="form-control">{{ comment }}</textarea>
+                </p>
+
                 <div class="buttons">
                     <div class="pull-right">
+
+                        {% if text_agree %}
+                        {{ text_agree }}
+                            {% if agree %}
+                                <input type="checkbox" name="agree" value="1" checked="checked" />
+                            {% else %}
+                                <input type="checkbox" name="agree" value="1" />
+                            {% endif %}
+                        {% endif %}
+
                         <input value="确认订单" id="button-confirm" data-loading-text="加载中......" class="btn btn-primary" type="button">
                     </div>
                 </div>
-
-            </div>
+            </div></div>
         </div>
 
 

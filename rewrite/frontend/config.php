@@ -16,8 +16,8 @@ $rewrite = [
             'class' => 'ModelTenfCatalogProduct',
         ]
     ],
-    'view' => [
-        // file path => file path
-        'default/template/checkout/checkout' => 'default/template/checkout/checkout'
-    ]
+//    'view' => [
+//        // file path => file path
+//        'default/template/checkout/checkout' => 'default/template/checkout/checkout'
+//    ]
 ];
