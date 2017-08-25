@@ -19,7 +19,7 @@ final class DB {
 	
 	public function read($session_id) {
 		$query = $this->db->query("SELECT `data` FROM `" . DB_PREFIX . "session` WHERE session_id = '" . $this->db->escape($session_id) . "' AND expire > " . (int)time());
-		
+
 		if ($query->num_rows) {
 			return json_decode($query->row['data'], true);
 		} else {
