@@ -63,13 +63,14 @@ abstract class AbstractModel extends BaseObject
         }
 
         if (!empty($data)) {
-            try {
+            // update
+            if (isset($data[$this->getPrimaryKey()])) {
+                return $this->update($data);
+            } else {
+                // insert new
                 return $this->add($data);
-            } catch (\Exception $e) {
-                if (issset($data['id'])) {
-                    return $this->update($data);
-                }
             }
+
         }
         return false;
     }
@@ -91,11 +92,11 @@ abstract class AbstractModel extends BaseObject
             try {
                 $this->_adapt->beginTransaction();
                 $this->saveBefore($data);
-                $result = $this->db-insert($this->_table,$data);
+                $result = $this->_adapt->insert($this->_table,$data);
                 $this->saveAfter($data);
                 $this->_adapt->commit();
             } catch (Exception $e) {
-                $this->_adapt->rollback();
+                $this->_adapt->rollBack();
                 $this->exception($e);
             }
         }
@@ -107,7 +108,7 @@ abstract class AbstractModel extends BaseObject
         // do you want to do
     }
 
-    public function update($data=[])
+    protected function update($data=[])
     {
         if ($data === []) {
             $data = $this->_data;
@@ -118,10 +119,10 @@ abstract class AbstractModel extends BaseObject
         if (!empty($data)) {
             try {
                 $this->_adapt->beginTransaction();
-                $result = $this->_adapt->update($this->_table, $data, ['id' => $data['id']]);
+                $result = $this->_adapt->update($this->_table, $data, [$this->getPrimaryKey() => $data[$this->getPrimaryKey()]]);
                 $this->_adapt->commit();
             } catch (Exception $e) {
-                $this->_adapt->rollback();
+                $this->_adapt->rollBack();
                 $this->exception($e);
             }
         }
@@ -130,15 +131,15 @@ abstract class AbstractModel extends BaseObject
 
     public function delete($id=null)
     {
-        $id = is_null($id) ? $this->getId() : $id ;
+        $id = is_null($id) ? $this->getData($this->getPrimaryKey()) : $id ;
         $result = false;
         if ($id) {
             try {
                 $this->_adapt->beginTransaction();
-                $result = $this->_adapt->delete($this->_table, ['id' => $id]);
+                $result = $this->_adapt->delete($this->_table, [$this->getPrimaryKey() => $id]);
                 $this->_adapt->commit();
             } catch (Exception $e) {
-                $this->_adapt->rollback();
+                $this->_adapt->rollBack();
                 $this->exception($e);
             }
         }

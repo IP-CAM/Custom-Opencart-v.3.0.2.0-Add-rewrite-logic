@@ -65,6 +65,13 @@ class BaseObject
         return $this;
     }
 
+    public function unsetData($key)
+    {
+        if (isset($this->_data[$key])) {
+            unset($this->_data[$key]);
+        }
+    }
+
     protected function _getMappingKey($key)
     {
         return isset($this->_fieldMap[$key]) ? $this->_fieldMap[$key] : $key ;

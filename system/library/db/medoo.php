@@ -1566,4 +1566,19 @@ class Medoo
         }
         return true;
     }
+
+    public function beginTransaction()
+    {
+        $this->pdo->beginTransaction();
+    }
+
+    public function commit()
+    {
+        $this->pdo->commit();
+    }
+
+    public function rollBack()
+    {
+        $this->pdo->rollBack();
+    }
 }

@@ -10,7 +10,11 @@ class ControllerTenfCheckoutCheckout extends ControllerCheckoutCheckout
         $sales = $this->load->getModel('sales/order');
 
         echo '<pre>';
-        print_r($sales->load(1)->getCurrencyCode());
+        $sales->load(1)->setCurrencyCode('cny');
+        $sales->unsetData($sales->getPrimaryKey());
+        $sales->save();
+//        print_r($sales->getCurrencyCode());
+            //->getCurrencyCode());
         exit;
 
 
