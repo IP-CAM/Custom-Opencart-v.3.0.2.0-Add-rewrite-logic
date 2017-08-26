@@ -7,7 +7,13 @@ class ControllerTenfCheckoutCheckout extends ControllerCheckoutCheckout
         $this->load->language('checkout/checkout');
         $this->document->addStyle('catalog/view/javascript/vue.js');
 
-        var_dump($this->load->model('checkout/order')->getTest());
+        $sales = $this->load->getModel('sales/order');
+
+        echo '<pre>';
+        print_r($sales->load(1)->getCurrencyCode());
+        exit;
+
+
         $this->document->setTitle($this->language->get('heading_title'));
 
         $data['breadcrumbs'] = array();

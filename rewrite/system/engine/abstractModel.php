@@ -7,9 +7,11 @@
  * @date    17-8-25 下午5:22
  * @version 0.1.0
  */
-abstract class AbstructModel extends BaseObject
+abstract class AbstractModel extends BaseObject
 {
-    protected $_db;
+    protected $_adapt;
+
+    protected $_table;
 
     protected $_eventPrefix = 'core';
 
@@ -19,15 +21,34 @@ abstract class AbstructModel extends BaseObject
      */
     public abstract function getTable();
 
+    /**
+     * get table primary key
+     * @return string
+     */
+    public abstract function getPrimaryKey();
+
     public function __construct($register)
     {
-        $this->_db = $register->db;
+        $this->_adapt = $register->get('db')->getAdapter();
+        $this->_table = $this->getTable();
     }
 
     public function getInsertId()
     {
-        return $this->_db->id();
+        return $this->_adapt->id();
     }
+
+    public function load($id)
+    {
+        $rows = $this->_adapt->select($this->_table, '*', [$this->getPrimaryKey() => $id]);
+        if (!empty($rows)) {
+            $this->setData($rows[0]);
+        }
+        return $this;
+    }
+
+
+
 
     /**
      * @param array $data
@@ -68,13 +89,13 @@ abstract class AbstructModel extends BaseObject
         $result = false;
         if (!empty($data)) {
             try {
-                $this->_db->beginTransaction();
+                $this->_adapt->beginTransaction();
                 $this->saveBefore($data);
-                $result = $this->db-insert($this->getTable(),$data);
+                $result = $this->db-insert($this->_table,$data);
                 $this->saveAfter($data);
-                $this->_db->commit();
+                $this->_adapt->commit();
             } catch (Exception $e) {
-                $this->_db->rollback();
+                $this->_adapt->rollback();
                 $this->exception($e);
             }
         }
@@ -96,11 +117,11 @@ abstract class AbstructModel extends BaseObject
         $result = false;
         if (!empty($data)) {
             try {
-                $this->_db->beginTransaction();
-                $result = $this->_db->update($this->getTable(), $data, ['id' => $data['id']]);
-                $this->_db->commit();
+                $this->_adapt->beginTransaction();
+                $result = $this->_adapt->update($this->_table, $data, ['id' => $data['id']]);
+                $this->_adapt->commit();
             } catch (Exception $e) {
-                $this->_db->rollback();
+                $this->_adapt->rollback();
                 $this->exception($e);
             }
         }
@@ -113,11 +134,11 @@ abstract class AbstructModel extends BaseObject
         $result = false;
         if ($id) {
             try {
-                $this->_db->beginTransaction();
-                $result = $this->_db->delete($this->getTable(), ['id' => $id]);
-                $this->_db->commit();
+                $this->_adapt->beginTransaction();
+                $result = $this->_adapt->delete($this->_table, ['id' => $id]);
+                $this->_adapt->commit();
             } catch (Exception $e) {
-                $this->_db->rollback();
+                $this->_adapt->rollback();
                 $this->exception($e);
             }
         }

@@ -14,6 +14,16 @@ $rewrite = [
         'catalog/product' => [
             'rewrite' => true,
             'class' => 'ModelTenfCatalogProduct',
+        ],
+        'sales/order' => [
+            'rewrite' => true,
+            'class' => 'ModelTenfCheckoutOrder'
+        ]
+    ],
+    'library' => [
+        'DB' => [
+            'rewrite' => true,
+            'class' => 'DB'
         ]
     ],
     'view' => [

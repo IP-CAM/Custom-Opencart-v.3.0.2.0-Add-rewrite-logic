@@ -1544,4 +1544,26 @@ class Medoo
 
         return $query;
     }
+
+    public function getLastId()
+    {
+        return $this->id();
+    }
+
+    public function countAffected()
+    {
+        return $this->statement->rowCount();
+    }
+
+    public function connected()
+    {
+        try{
+            $this->pdo->getAttribute(PDO::ATTR_SERVER_INFO);
+        } catch (PDOException $e) {
+            if(strpos($e->getMessage(), 'Server has gone away')!==false){
+                return false;
+            }
+        }
+        return true;
+    }
 }

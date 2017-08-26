@@ -101,6 +101,31 @@ final class Loader {
         }
     }
 
+    public function getModel($uri)
+    {
+        $rewrite = [];
+        require(DIR_REWRITE . 'config.php');
+        if (isset($rewrite['model'][$uri])) {
+            if($rewrite['model'][$uri]['rewrite']) {
+                require_once DIR_REWRITE . 'model/' . $uri . '.php';
+                $class = $rewrite['model'][$uri]['class'];
+                return new $class($this->registry);
+            } else {
+                throw new \Exception('Error: not config ' . $uri . '!');
+            }
+        } else {
+            throw new \Exception('Error: Could not load model ' . $uri . '!');
+        }
+    }
+
+    public function getSingletonModel($uri)
+    {
+        if (!$this->registry->has($uri)) {
+            $this->registry->set($uri, $this->getModel($uri));
+        }
+        return $this->registry->get($uri);
+    }
+
     /**
      * 
      *
@@ -157,6 +182,17 @@ final class Loader {
             
         $file = DIR_SYSTEM . 'library/' . $route . '.php';
         $class = str_replace('/', '\\', $route);
+
+        // if is rewrite, load $rewrite
+        $rewrite = [];
+        require(DIR_REWRITE . 'config.php');
+        if (isset($rewrite['library'][$route])) {
+            if($rewrite['library'][$route]['rewrite']) {
+                require_once $file;
+                $file  = DIR_REWRITE . 'library/' . $route . '.php';
+                $class = $rewrite['library'][$route]['class'];
+            }
+        }
 
         if (is_file($file)) {
             include_once($file);
