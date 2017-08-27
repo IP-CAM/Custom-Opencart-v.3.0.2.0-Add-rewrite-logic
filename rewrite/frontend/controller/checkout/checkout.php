@@ -4,35 +4,173 @@ class ControllerTenfCheckoutCheckout extends ControllerCheckoutCheckout
 {
     public function index()
     {
+        // 1. shopping cart not empty
+        // 2. have address
+        // 3. default address
+        // 4. has shipping ?
+        // 5. payment method
+        // 6. shipping method
+        // 7. refresh total amount
+
+        // Validate cart has products and has stock.
+        if ((!$this->cart->hasProducts() && empty($this->session->data['vouchers'])) || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout'))) {
+            $this->response->redirect($this->url->link('checkout/cart'));
+        }
+
+        // prev if not create address, if not need shipping, set default address
+        // 1. get products and total, expect for shipping price
+        // 2. if need shipping , select shipping method and get shipping quote
+        // 3. select shipping method, refresh total amount
+        // 4. select payment method
+        // 5. create order and go to payment
+        $products = $this->getCartProducts();
+        $address  = $this->getAddress();
+        $hasShipping = $this->hasShipping();
+
+
+        $total = $this->getTotals();
+        /*********************************************
+         * payment method
+         *********************************************/
+        // Payment Methods
+        $paymentMethods = $this->getPaymentMethods($address->getData(), $total['totals'][1]);
+        /*********************************************
+         * shipping method
+         *********************************************/
+        // Shipping Methods
+        if ($hasShipping) {
+            $shippingMethods = $this->getShippingMethods($address->getData());
+        } else {
+            $shippingMethods = [];
+        }
+
+        /*********************************************
+        /* Validate minimum quantity requirements.
+         *********************************************/
+        // @TODO
+//        foreach ($products as $product) {
+//            $product_total = 0;
+//
+//            foreach ($products as $product_2) {
+//                if ($product_2['product_id'] == $product['product_id']) {
+//                    $product_total += $product_2['quantity'];
+//                }
+//            }
+//
+//            if ($product['minimum'] > $product_total) {
+//                $this->response->redirect($this->url->link('checkout/cart'));
+//            }
+//        }
+
         $this->load->language('checkout/checkout');
         $this->document->addStyle('catalog/view/javascript/vue.js');
-
-        $sales = $this->load->getModel('sales/order');
-
-        echo '<pre>';
-        $sales->load(1)->setCurrencyCode('cny');
-        $sales->unsetData($sales->getPrimaryKey());
-        $sales->save();
-//        print_r($sales->getCurrencyCode());
-            //->getCurrencyCode());
-        exit;
-
 
         $this->document->setTitle($this->language->get('heading_title'));
 
         $data['breadcrumbs'] = array();
 
         $data = $this->initData();
-        $data += $this->getPaymentMethods();
-        $data += $this->getCartProducts();
-        $data += $this->getTotals();
+        $data['payment_methods'] = $paymentMethods;
+        $data['shipping_methods'] = $shippingMethods;
+        $data['totals'] = $total;
 
         $this->response->setOutput($this->load->view('checkout/checkout', $data));
     }
 
-    protected function getPaymentMethods()
+
+    protected function getAddress()
     {
-        $total = 0;
+        // if address not set and hasShipping is true
+        // set default address
+        // country_id, zone_id
+        $hasInfo = false;
+        if ($this->customer->isLogged()) {
+            if ($this->customer->getAddressId()) {
+                // get address info
+                $address = $this->load->getSingletonModel('customer/address')->load($this->customer->getAddressId());
+                $hasInfo = true;
+            }
+        }
+
+        if (!$hasInfo) {
+            $address = new BaseObject([
+                'country_id' => $this->config->get('config_country_id'),
+                'zone_id' => $this->config->get('config_zone_id')
+            ]);
+        }
+
+        return $address;
+    }
+
+    protected function getShippingMethods($address)
+    {
+        // Shipping Methods
+        $method_data = array();
+        if (isset($address)) {
+
+            $this->load->model('setting/extension');
+
+            $results = $this->model_setting_extension->getExtensions('shipping');
+
+            foreach ($results as $result) {
+                if ($this->config->get('shipping_' . $result['code'] . '_status')) {
+                    $this->load->model('extension/shipping/' . $result['code']);
+
+                    $quote = $this->{'model_extension_shipping_' . $result['code']}->getQuote($address);
+
+                    if ($quote) {
+                        $method_data[$result['code']] = array(
+                            'title'      => $quote['title'],
+                            'quote'      => $quote['quote'],
+                            'sort_order' => $quote['sort_order'],
+                            'error'      => $quote['error']
+                        );
+                    }
+                }
+            }
+
+            $sort_order = array();
+
+            foreach ($method_data as $key => $value) {
+                $sort_order[$key] = $value['sort_order'];
+            }
+
+            array_multisort($sort_order, SORT_ASC, $method_data);
+
+            $this->session->data['shipping_methods'] = $method_data;
+        }
+        return $method_data;
+/**
+        if (empty($this->session->data['shipping_methods'])) {
+            $data['error_warning'] = sprintf($this->language->get('error_no_shipping'), $this->url->link('information/contact'));
+        } else {
+            $data['error_warning'] = '';
+        }
+
+        if (isset($this->session->data['shipping_methods'])) {
+            $data['shipping_methods'] = $this->session->data['shipping_methods'];
+        } else {
+            $data['shipping_methods'] = array();
+        }
+
+        if (isset($this->session->data['shipping_method']['code'])) {
+            $data['code'] = $this->session->data['shipping_method']['code'];
+        } else {
+            $data['code'] = '';
+        }
+
+        if (isset($this->session->data['comment'])) {
+            $data['comment'] = $this->session->data['comment'];
+        } else {
+            $data['comment'] = '';
+        }
+
+        return $data;
+//*/
+    }
+
+    protected function getPaymentMethods($address, $total)
+    {
         // Payment Methods
         $method_data = array();
 
@@ -46,7 +184,7 @@ class ControllerTenfCheckoutCheckout extends ControllerCheckoutCheckout
             if ($this->config->get('payment_' . $result['code'] . '_status')) {
                 $this->load->model('extension/payment/' . $result['code']);
 
-                $method = $this->{'model_extension_payment_' . $result['code']}->getMethod($this->session->data['payment_address'], $total);
+                $method = $this->{'model_extension_payment_' . $result['code']}->getMethod($address, $total);
 
                 if ($method) {
                     if ($recurring) {
@@ -68,6 +206,8 @@ class ControllerTenfCheckoutCheckout extends ControllerCheckoutCheckout
 
         array_multisort($sort_order, SORT_ASC, $method_data);
 
+        return $method_data;
+/**
         $this->session->data['payment_methods'] = $method_data;
 
         if (empty($this->session->data['payment_methods'])) {
@@ -103,12 +243,13 @@ class ControllerTenfCheckoutCheckout extends ControllerCheckoutCheckout
         }
 
         return $data;
+//*/
     }
 
 
     protected function getCartProducts()
     {
-        $data['products'] = array();
+        $data = array();
 
         foreach ($this->cart->getProducts() as $product) {
             $option_data = array();
@@ -154,7 +295,7 @@ class ControllerTenfCheckoutCheckout extends ControllerCheckoutCheckout
                 }
             }
 
-            $data['products'][] = array(
+            $data[] = array(
                 'cart_id'    => $product['cart_id'],
                 'product_id' => $product['product_id'],
                 'name'       => $product['name'],
@@ -213,14 +354,14 @@ class ControllerTenfCheckoutCheckout extends ControllerCheckoutCheckout
 
         array_multisort($sort_order, SORT_ASC, $totals);
 
-        $data['totals'] = array();
+        $data = array();
         foreach ($totals as $total) {
             if (!$this->hasShipping()) {
                 if ($total['code'] != 'total') {
                     continue;
                 }
             }
-            $data['totals'][] = array(
+            $data[] = array(
                 'title' => $total['title'],
                 'text'  => $this->currency->format($total['value'], $this->session->data['currency'])
             );
@@ -252,7 +393,7 @@ class ControllerTenfCheckoutCheckout extends ControllerCheckoutCheckout
             'text' => $this->language->get('heading_title'),
             'href' => $this->url->link('checkout/checkout', '', true)
         );
-
+/**
         $data['text_checkout_option'] = sprintf($this->language->get('text_checkout_option'), 1);
         $data['text_checkout_account'] = sprintf($this->language->get('text_checkout_account'), 2);
         $data['text_checkout_payment_address'] = sprintf($this->language->get('text_checkout_payment_address'), 2);
@@ -281,7 +422,7 @@ class ControllerTenfCheckoutCheckout extends ControllerCheckoutCheckout
         } else {
             $data['account'] = '';
         }
-
+ */
         $data['shipping_required'] = $this->hasShipping();
 
         $data['column_left'] = $this->load->controller('common/column_left');

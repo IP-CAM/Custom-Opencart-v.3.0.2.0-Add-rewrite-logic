@@ -6,7 +6,7 @@
  * Time: 下午10:26
  */
 
-class ModelTenfCheckoutOrder extends AbstractModel
+class ModelTenfSalesOrder extends AbstractModel
 {
     public function getTable()
     {
@@ -16,5 +16,10 @@ class ModelTenfCheckoutOrder extends AbstractModel
     public function getPrimaryKey()
     {
         return 'order_id';
+    }
+
+    public function addProduct($product)
+    {
+
     }
 }

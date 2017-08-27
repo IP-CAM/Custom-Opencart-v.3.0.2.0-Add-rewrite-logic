@@ -15,9 +15,17 @@ $rewrite = [
             'rewrite' => true,
             'class' => 'ModelTenfCatalogProduct',
         ],
+        'checkout/cart' => [
+            'rewrite' => true,
+            'class' => 'ModelTenfCheckoutCart'
+        ],
         'sales/order' => [
             'rewrite' => true,
-            'class' => 'ModelTenfCheckoutOrder'
+            'class' => 'ModelTenfSalesOrder'
+        ],
+        'customer/address' => [
+            'rewrite' => true,
+            'class' => 'ModelTenfCustomerAddress'
         ]
     ],
     'library' => [

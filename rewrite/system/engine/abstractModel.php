@@ -47,9 +47,6 @@ abstract class AbstractModel extends BaseObject
         return $this;
     }
 
-
-
-
     /**
      * @param array $data
      * @return bool
